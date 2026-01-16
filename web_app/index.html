@@ -1,20 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>ESP32 GPIO Controller</title>
-
-<link rel="stylesheet" href="styles.css">
-<script type="module" src="app.js"></script>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fish Feeder Controller</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="mdtimepicker.css">
 </head>
 
 <body>
 
 <div class="card">
-
-  <h1>ESP32 GPIO Control</h1>
+  <h1>🐠 Fish Feeder</h1>
   <div id="statusBadge" class="status-badge offline">Offline</div>
 
   <!-- Login UI -->
@@ -27,26 +26,76 @@
 
   <!-- Control UI -->
   <div id="controlBox" style="display:none;">
+    
+    <!-- Device Status Section -->
+    <div class="status-section">
+      <div class="status-item">
+        <span class="material-icons">schedule</span>
+        <div class="status-info">
+          <span class="label">Last Fed</span>
+          <span id="lastFedTime" class="value">--</span>
+        </div>
+      </div>
+      <div class="status-item">
+        <span class="material-icons">restaurant</span>
+        <div class="status-info">
+          <span class="label">Feed Count</span>
+          <span id="feedCount" class="value">0</span>
+        </div>
+      </div>
+    </div>
 
-    <button id="gpio1Btn" class="gpio-button" data-gpio="gpio1">GPIO 1</button>
-    <div id="gpio1Status" class="gpio-status">Status: OFF</div>
+    <!-- Turbidity Section -->
+    <div class="turbidity-section">
+      <div class="turbidity-header">
+        <span class="material-icons">water_drop</span>
+        <span>Water Quality</span>
+        <span id="turbidityAlert" class="alert-badge hidden">⚠️ Alert</span>
+      </div>
+      <div class="turbidity-bar-container">
+        <div id="turbidityBar" class="turbidity-bar"></div>
+      </div>
+      <div class="turbidity-values">
+        <span id="turbidityValue">0</span>
+        <span class="threshold">/ <span id="turbidityThreshold">500</span></span>
+      </div>
+    </div>
 
-    <button id="gpio2Btn" class="gpio-button" data-gpio="gpio2">GPIO 2</button>
-    <div id="gpio2Status" class="gpio-status">Status: OFF</div>
+    <!-- Feed Now Button -->
+    <button id="feedNowBtn" class="btn feed-btn">
+      <span class="material-icons">pets</span>
+      Feed Now
+    </button>
 
-    <button id="gpio3Btn" class="gpio-button" data-gpio="gpio3">GPIO 3</button>
-    <div id="gpio3Status" class="gpio-status">Status: OFF</div>
+    <!-- Toggle Timers Button -->
+    <button id="toggleTimersBtn" class="btn schedule-btn">
+      <span class="material-icons">alarm</span>
+      Schedule
+    </button>
 
-    <button id="gpio34Btn" class="gpio-button" data-gpio="gpio34">GPIO 34</button>
-    <div id="gpio34Status" class="gpio-status">Status: OFF</div>
+    <!-- Timers Section (Initially Hidden) -->
+    <div id="timersSection" class="timers-section hidden">
+      <h3>Feeding Schedule</h3>
+      <div id="timersList" class="timers-list">
+        <!-- Timers will be dynamically added here -->
+      </div>
+      <div class="add-timer">
+        <input type="text" id="newTimerInput" class="time-input" placeholder="Select time" readonly />
+        <button id="addTimerBtn" class="btn add-btn">
+          <span class="material-icons">add</span>
+        </button>
+      </div>
+    </div>
 
+    <!-- Logout Button -->
     <button id="logoutBtn" class="btn logout-btn">Logout</button>
   </div>
 
 </div>
 
-<!-- JS + Firebase Integrated -->
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="mdtimepicker.js"></script>
+<script type="module" src="app.js"></script>
 
 </body>
 </html>

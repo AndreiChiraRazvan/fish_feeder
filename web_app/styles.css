@@ -1,145 +1,518 @@
-  body {
-    margin: 0;
-    padding: 0;
-    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: "Segoe UI", sans-serif;
-    color: white;
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
+body {
+  margin: 0;
+  padding: 20px;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  color: white;
+}
+
+.card {
+  width: 420px;
+  max-width: 95%;
+  padding: 28px 25px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 45px rgba(0, 0, 0, 0.25);
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 10px;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+h3 {
+  font-size: 16px;
+  margin-bottom: 15px;
+  color: #a0a0a0;
+}
+
+/* ==================== STATUS BADGE ==================== */
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 15px;
+  border-radius: 50px;
+  font-size: 13px;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.online {
+  background: linear-gradient(135deg, #4caf50, #66bb6a);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+}
+
+.offline {
+  background: linear-gradient(135deg, #e53935, #ef5350);
+  box-shadow: 0 4px 15px rgba(229, 57, 53, 0.4);
+}
+
+/* ==================== AUTH BOX ==================== */
+
+#authBox {
+  width: 100%;
+  text-align: center;
+}
+
+input[type="email"],
+input[type="password"] {
+  width: 90%;
+  padding: 14px;
+  margin: 10px 0;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.18);
+  color: white;
+  text-align: center;
+  transition: background 0.3s ease;
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+#authMsg {
+  margin-top: 10px;
+  color: #ffb3b3;
+  font-size: 14px;
+}
+
+/* ==================== BUTTONS ==================== */
+
+.btn {
+  width: 92%;
+  padding: 14px;
+  margin-top: 15px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: white;
+  font-weight: 600;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn .material-icons {
+  font-size: 20px;
+}
+
+.btn:active::after {
+  content: "";
+  position: absolute;
+  width: 180%;
+  height: 180%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  animation: ripple 0.5s ease-out;
+}
+
+@keyframes ripple {
+  from {
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1.8);
+    opacity: 0;
+  }
+}
+
+.login-btn {
+  background: linear-gradient(135deg, #03a9f4, #0277bd);
+  box-shadow: 0 6px 18px rgba(3, 169, 244, 0.35);
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(3, 169, 244, 0.5);
+}
+
+.feed-btn {
+  background: linear-gradient(135deg, #6d5dfc, #5b0eeb);
+  box-shadow: 0 6px 18px rgba(109, 93, 252, 0.4);
+  font-size: 18px;
+  padding: 16px;
+}
+
+.feed-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(109, 93, 252, 0.6);
+}
+
+.feed-btn.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.schedule-btn {
+  background: linear-gradient(135deg, #1f3b73, #274b8c);
+  box-shadow: 0 4px 15px rgba(39, 75, 140, 0.4);
+}
+
+.schedule-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(39, 75, 140, 0.5);
+}
+
+.logout-btn {
+  background: linear-gradient(135deg, #e53935, #c62828);
+  box-shadow: 0 6px 18px rgba(229, 57, 53, 0.35);
+  margin-top: 25px;
+}
+
+.logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(229, 57, 53, 0.5);
+}
+
+.add-btn {
+  width: 50px;
+  min-width: 50px;
+  padding: 12px;
+  background: linear-gradient(135deg, #4caf50, #388e3c);
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+  margin: 0;
+}
+
+.add-btn:hover {
+  transform: translateY(-2px);
+}
+
+/* ==================== STATUS SECTION ==================== */
+
+.status-section {
+  display: flex;
+  justify-content: space-around;
+  gap: 15px;
+  margin: 20px 0;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 15px;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-item .material-icons {
+  font-size: 28px;
+  color: #8abdff;
+}
+
+.status-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.status-info .label {
+  font-size: 11px;
+  color: #9baacf;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-info .value {
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+}
+
+/* ==================== TURBIDITY SECTION ==================== */
+
+.turbidity-section {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 15px;
+  padding: 15px 20px;
+  margin: 15px 0;
+}
+
+.turbidity-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.turbidity-header .material-icons {
+  color: #03a9f4;
+}
+
+.alert-badge {
+  margin-left: auto;
+  background: rgba(255, 82, 82, 0.3);
+  color: #ff5252;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.turbidity-bar-container {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.turbidity-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #4caf50, #8bc34a);
+  border-radius: 10px;
+  transition: width 0.5s ease, background 0.3s ease;
+}
+
+.turbidity-bar.warning {
+  background: linear-gradient(90deg, #ff9800, #ffc107);
+}
+
+.turbidity-bar.danger {
+  background: linear-gradient(90deg, #f44336, #ff5722);
+}
+
+.turbidity-values {
+  margin-top: 8px;
+  text-align: right;
+  font-size: 14px;
+}
+
+.turbidity-values .threshold {
+  color: #9baacf;
+}
+
+/* ==================== TIMERS SECTION ==================== */
+
+.timers-section {
+  margin-top: 20px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 15px;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.timers-list {
+  max-height: 250px;
+  overflow-y: auto;
+  margin-bottom: 15px;
+}
+
+.timers-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.timers-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.timers-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.no-timers {
+  color: #9baacf;
+  font-size: 14px;
+  padding: 20px;
+}
+
+.timer-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  margin-bottom: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.timer-item.enabled {
+  border-left: 3px solid #4caf50;
+}
+
+.timer-item.disabled {
+  border-left: 3px solid #9baacf;
+  opacity: 0.7;
+}
+
+.timer-info {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.timer-time {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.timer-status {
+  font-size: 11px;
+  color: #9baacf;
+  text-transform: uppercase;
+}
+
+.timer-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.timer-toggle,
+.timer-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timer-toggle {
+  color: #9baacf;
+}
+
+.timer-toggle.on {
+  color: #4caf50;
+}
+
+.timer-toggle:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.timer-delete {
+  color: #e57373;
+}
+
+.timer-delete:hover {
+  background: rgba(229, 115, 115, 0.2);
+}
+
+.timer-toggle .material-icons,
+.timer-delete .material-icons {
+  font-size: 24px;
+}
+
+/* ==================== ADD TIMER ==================== */
+
+.add-timer {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.time-input {
+  flex: 1;
+  padding: 12px 15px;
+  border-radius: 10px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.time-input:focus {
+  background: rgba(255, 255, 255, 0.25);
+  outline: none;
+}
+
+.time-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ==================== UTILITY CLASSES ==================== */
+
+.hidden {
+  display: none !important;
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media screen and (max-width: 480px) {
   .card {
-    width: 380px;
-    max-width: 92%;
-    padding: 28px 25px;
-    border-radius: 20px;
-    background: rgba(255,255,255,0.12);
-    backdrop-filter: blur(14px);
-    box-shadow: 0 10px 45px rgba(0,0,0,0.25);
-    text-align: center;
+    padding: 20px 15px;
   }
 
   h1 {
-    margin-bottom: 10px;
-    font-size: 26px;
-    font-weight: bold;
+    font-size: 22px;
   }
 
-  .status-badge {
-    display: inline-block;
-    padding: 6px 15px;
-    border-radius: 50px;
-    font-size: 13px;
-    margin-bottom: 20px;
-  }
-  .online { background: #4caf50; }
-  .offline { background: #e53935; }
-
-  /* Center input elements nicely */
-  #authBox {
-    width: 100%;
-    text-align: center;
+  .status-section {
+    flex-direction: column;
+    gap: 10px;
   }
 
-  input {
-    width: 90%;
-    padding: 14px;
-    margin: 10px 0;
-    border-radius: 10px;
-    border: none;
-    outline: none;
-    font-size: 16px;
-    background: rgba(255,255,255,0.18);
-    color: white;
-    text-align: center;
+  .status-item {
+    justify-content: center;
   }
 
-  /* Modern Global Button Style */
   .btn {
-    width: 92%;
-    padding: 14px;
-    margin-top: 15px;
-    border-radius: 12px;
-    border: none;
-    font-size: 17px;
-    cursor: pointer;
-    color: white;
-    font-weight: 600;
-
-    background: linear-gradient(135deg, #03a9f4, #0277bd);
-    transition: 0.25s ease;
-    box-shadow: 0 6px 18px rgba(3, 169, 244, 0.35);
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* Ripple effect */
-  .btn:active::after {
-    content: "";
-    position: absolute;
-    width: 180%;
-    height: 180%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(255,255,255,0.4);
-    border-radius: 50%;
-    animation: ripple 0.5s ease-out;
-  }
-
-  @keyframes ripple {
-    from { transform: translate(-50%, -50%) scale(0.3); opacity: 1; }
-    to   { transform: translate(-50%, -50%) scale(1.8); opacity: 0; }
-  }
-
-  /* Logout Button Style */
-  .logout-btn {
-    background: linear-gradient(135deg, #e53935, #c62828);
-    box-shadow: 0 6px 18px rgba(229, 57, 53, 0.35);
-  }
-
-  /* Modern GPIO Buttons */
-  .gpio-button {
-    width: 100%;
-    padding: 16px;
-    margin: 20px 0 5px 0;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #1f3b73, #274b8c);
-    border: none;
-    cursor: pointer;
-    font-size: 19px;
-    color: white;
-    transition: 0.25s ease;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.35);
-    font-weight: 600;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .gpio-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 25px rgba(30,80,200,0.45);
-  }
-
-  .gpio-button.on {
-    background: linear-gradient(135deg, #00c853, #98ee99);
-    transform: translateY(-4px);
-    box-shadow: 0 10px 28px rgba(0,255,120,0.45);
-  }
-
-  .gpio-status {
-    font-size: 16px;
-    margin-bottom: 10px;
-    color: #cfcfcf;
-  }
-
-  #authMsg {
-    margin-top: 10px;
-    color: #ffb3b3;
     font-size: 14px;
+    padding: 12px;
   }
-  input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
+
+  .feed-btn {
+    font-size: 16px;
+  }
 }
