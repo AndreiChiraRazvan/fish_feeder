@@ -56,6 +56,32 @@ const turbidityAlert = document.getElementById("turbidityAlert");
 
 // State
 let timersVisible = false;
+const MAX_TIMERS = 5;
+
+// ==================== NOTIFICATION SYSTEM ====================
+
+function showNotification(message, type = 'warning') {
+  // Remove existing notification
+  const existing = document.querySelector('.toast-notification');
+  if (existing) existing.remove();
+
+  const toast = document.createElement('div');
+  toast.className = `toast-notification ${type}`;
+  toast.innerHTML = `
+    <span class="material-icons">${type === 'error' ? 'error' : type === 'success' ? 'check_circle' : 'warning'}</span>
+    <span>${message}</span>
+  `;
+  document.body.appendChild(toast);
+
+  // Trigger animation
+  setTimeout(() => toast.classList.add('show'), 10);
+
+  // Auto-remove after 3 seconds
+  setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => toast.remove(), 300);
+  }, 3000);
+}
 
 // ==================== AUTHENTICATION ====================
 
@@ -90,13 +116,27 @@ onAuthStateChanged(auth, (user) => {
 // ==================== FIREBASE LISTENERS ====================
 
 function startListeners() {
-  // Device Status
+  // Device Status - check lastSeen timestamp for accuracy
   onValue(ref(db, "/device"), (snapshot) => {
     const device = snapshot.val();
     if (device) {
-      const isOnline = device.online;
+      const lastSeen = device.lastSeen ? new Date(device.lastSeen) : null;
+      const now = new Date();
+
+      // Device is online if lastSeen is within 2 minutes
+      const ONLINE_THRESHOLD_MS = 2 * 60 * 1000; // 2 minutes
+      let isOnline = false;
+
+      if (lastSeen && device.online) {
+        const timeDiff = now - lastSeen;
+        isOnline = timeDiff < ONLINE_THRESHOLD_MS;
+      }
+
       badge.className = `status-badge ${isOnline ? "online" : "offline"}`;
       badge.textContent = isOnline ? "Device Online" : "Device Offline";
+    } else {
+      badge.className = "status-badge offline";
+      badge.textContent = "Device Offline";
     }
   });
 
@@ -158,24 +198,27 @@ function startListeners() {
 
 // ==================== FEED NOW ====================
 
-feedNowBtn.onclick = () => {
+feedNowBtn.onclick = async () => {
+  console.log("Feed Now button clicked");
   feedNowBtn.disabled = true;
   feedNowBtn.classList.add("loading");
 
-  set(ref(db, "/feednow"), true)
-    .then(() => {
-      console.log("Feed command sent!");
-      // Re-enable after short delay (ESP32 will reset this to false)
-      setTimeout(() => {
-        feedNowBtn.disabled = false;
-        feedNowBtn.classList.remove("loading");
-      }, 2000);
-    })
-    .catch((error) => {
-      console.error("Error:", error);
+  try {
+    console.log("Attempting to set /feednow to true...");
+    await set(ref(db, "/feednow"), true);
+    console.log("Feed command sent successfully!");
+
+    // Re-enable after short delay (ESP32 will reset this to false)
+    setTimeout(() => {
       feedNowBtn.disabled = false;
       feedNowBtn.classList.remove("loading");
-    });
+    }, 2000);
+  } catch (error) {
+    console.error("Error sending feed command:", error);
+    alert("Failed to send feed command: " + error.message);
+    feedNowBtn.disabled = false;
+    feedNowBtn.classList.remove("loading");
+  }
 };
 
 // ==================== TIMERS ====================
@@ -210,18 +253,29 @@ function renderTimers(timers) {
 
 function createTimerElement(key, timer) {
   const div = document.createElement("div");
-  div.className = `timer-item ${timer.enabled ? "enabled" : "disabled"}`;
+  const isTriggered = timer.triggered === true;
+
+  let stateClass = timer.enabled ? "enabled" : "disabled";
+  if (isTriggered) stateClass = "triggered";
+
+  div.className = `timer-item ${stateClass}`;
   div.dataset.key = key;
 
   const timeDisplay = formatTime12Hour(timer.time);
 
+  let statusText = timer.enabled ? "Active" : "Inactive";
+  if (isTriggered) statusText = "Completed";
+
   div.innerHTML = `
     <div class="timer-info">
       <span class="timer-time">${timeDisplay}</span>
-      <span class="timer-status">${timer.enabled ? "Active" : "Inactive"}</span>
+      <span class="timer-status">${statusText}</span>
     </div>
     <div class="timer-actions">
-      <button class="timer-toggle ${timer.enabled ? "on" : ""}" data-key="${key}" data-enabled="${timer.enabled}">
+      <button class="timer-toggle ${timer.enabled ? "on" : ""}${isTriggered ? " disabled" : ""}" 
+              data-key="${key}" 
+              data-enabled="${timer.enabled}"
+              ${isTriggered ? "disabled" : ""}>
         <span class="material-icons">${timer.enabled ? "toggle_on" : "toggle_off"}</span>
       </button>
       <button class="timer-delete" data-key="${key}">
@@ -230,15 +284,18 @@ function createTimerElement(key, timer) {
     </div>
   `;
 
-  // Toggle button
-  div.querySelector(".timer-toggle").onclick = (e) => {
-    const btn = e.currentTarget;
-    const timerKey = btn.dataset.key;
-    const currentEnabled = btn.dataset.enabled === "true";
-    update(ref(db, `/timers/${timerKey}`), { enabled: !currentEnabled });
-  };
+  // Toggle button (only if not triggered)
+  const toggleBtn = div.querySelector(".timer-toggle");
+  if (!isTriggered) {
+    toggleBtn.onclick = (e) => {
+      const btn = e.currentTarget;
+      const timerKey = btn.dataset.key;
+      const currentEnabled = btn.dataset.enabled === "true";
+      update(ref(db, `/timers/${timerKey}`), { enabled: !currentEnabled });
+    };
+  }
 
-  // Delete button
+  // Delete button (always available)
   div.querySelector(".timer-delete").onclick = (e) => {
     const timerKey = e.currentTarget.dataset.key;
     if (confirm("Delete this timer?")) {
@@ -253,7 +310,7 @@ function createTimerElement(key, timer) {
 addTimerBtn.onclick = async () => {
   const timeValue = newTimerInput.value;
   if (!timeValue) {
-    alert("Please select a time first");
+    showNotification("Please select a time first", "warning");
     return;
   }
 
@@ -261,13 +318,21 @@ addTimerBtn.onclick = async () => {
   const time24 = timeValue;
 
   try {
-    // Get current timers to find next available slot
+    // Get current timers to find next available slot and check limit
     const timersRef = ref(db, "/timers");
     const snapshot = await new Promise((resolve) => {
       onValue(timersRef, resolve, { onlyOnce: true });
     });
-    
+
     const timers = snapshot.val() || {};
+    const timerCount = Object.keys(timers).length;
+
+    // Check if max timers reached
+    if (timerCount >= MAX_TIMERS) {
+      showNotification(`Maximum ${MAX_TIMERS} timers allowed`, "error");
+      return;
+    }
+
     let nextSlot = 0;
 
     // Find the first available slot (timer0, timer1, timer2, etc.)
@@ -278,14 +343,16 @@ addTimerBtn.onclick = async () => {
     const newTimerKey = `timer${nextSlot}`;
     await set(ref(db, `/timers/${newTimerKey}`), {
       time: time24,
-      enabled: true
+      enabled: true,
+      triggered: false
     });
-    
+
     newTimerInput.value = "";
+    showNotification(`Timer added for ${formatTime12Hour(time24)}`, "success");
     console.log(`Timer ${newTimerKey} added: ${time24}`);
   } catch (error) {
     console.error("Error adding timer:", error);
-    alert("Failed to add timer: " + error.message);
+    showNotification("Failed to add timer: " + error.message, "error");
   }
 };
 

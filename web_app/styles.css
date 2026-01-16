@@ -518,3 +518,71 @@ input::placeholder {
     font-size: 16px;
   }
 }
+
+/* ==================== TOAST NOTIFICATIONS ==================== */
+
+.toast-notification {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100px);
+  padding: 14px 24px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 1000;
+  opacity: 0;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.toast-notification.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.toast-notification.warning {
+  background: linear-gradient(135deg, rgba(255, 152, 0, 0.9), rgba(255, 193, 7, 0.9));
+  color: #1a1a1a;
+}
+
+.toast-notification.error {
+  background: linear-gradient(135deg, rgba(229, 57, 53, 0.95), rgba(198, 40, 40, 0.95));
+  color: white;
+}
+
+.toast-notification.success {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.95), rgba(56, 142, 60, 0.95));
+  color: white;
+}
+
+.toast-notification .material-icons {
+  font-size: 20px;
+}
+
+/* ==================== TRIGGERED TIMER STATE ==================== */
+
+.timer-item.triggered {
+  border-left: 3px solid #9c27b0;
+  opacity: 0.6;
+  background: rgba(156, 39, 176, 0.1);
+}
+
+.timer-item.triggered .timer-status {
+  color: #ce93d8;
+}
+
+.timer-item.triggered .timer-toggle {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.timer-item.triggered .timer-toggle.disabled {
+  color: #666;
+}
+
