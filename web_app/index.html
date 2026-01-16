@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ESP32 GPIO Controller</title>
+
+<link rel="stylesheet" href="styles.css">
+<script type="module" src="app.js"></script>
+
+</head>
+
+<body>
+
+<div class="card">
+
+  <h1>ESP32 GPIO Control</h1>
+  <div id="statusBadge" class="status-badge offline">Offline</div>
+
+  <!-- Login UI -->
+  <div id="authBox">
+    <input id="emailField" type="email" placeholder="Email" />
+    <input id="passwordField" type="password" placeholder="Password" />
+    <button id="loginBtn" class="btn login-btn">Login</button>
+    <p id="authMsg"></p>
+  </div>
+
+  <!-- Control UI -->
+  <div id="controlBox" style="display:none;">
+
+    <button id="gpio1Btn" class="gpio-button" data-gpio="gpio1">GPIO 1</button>
+    <div id="gpio1Status" class="gpio-status">Status: OFF</div>
+
+    <button id="gpio2Btn" class="gpio-button" data-gpio="gpio2">GPIO 2</button>
+    <div id="gpio2Status" class="gpio-status">Status: OFF</div>
+
+    <button id="gpio3Btn" class="gpio-button" data-gpio="gpio3">GPIO 3</button>
+    <div id="gpio3Status" class="gpio-status">Status: OFF</div>
+
+    <button id="gpio34Btn" class="gpio-button" data-gpio="gpio34">GPIO 34</button>
+    <div id="gpio34Status" class="gpio-status">Status: OFF</div>
+
+    <button id="logoutBtn" class="btn logout-btn">Logout</button>
+  </div>
+
+</div>
+
+<!-- JS + Firebase Integrated -->
+
+
+</body>
+</html>
