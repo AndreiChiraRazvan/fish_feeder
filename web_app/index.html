@@ -7,7 +7,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="mdtimepicker.css">
 </head>
 
 <body>
@@ -80,7 +79,7 @@
         <!-- Timers will be dynamically added here -->
       </div>
       <div class="add-timer">
-        <input type="text" id="newTimerInput" class="time-input" placeholder="Select time" readonly />
+        <input type="time" id="newTimerInput" class="time-input" />
         <button id="addTimerBtn" class="btn add-btn">
           <span class="material-icons">add</span>
         </button>
@@ -94,7 +93,6 @@
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="mdtimepicker.js"></script>
 <script type="module" src="app.js"></script>
 
 </body>

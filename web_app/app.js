@@ -249,32 +249,24 @@ function createTimerElement(key, timer) {
   return div;
 }
 
-// Initialize time picker
-$(document).ready(function () {
-  $("#newTimerInput").mdtimepicker({
-    format: "hh:mm",
-    theme: "blue",
-    hourPadding: true
-  });
-
-  $("#newTimerInput").on("timechanged", function (e) {
-    // Time selected, ready to add
-  });
-});
-
-addTimerBtn.onclick = () => {
+// Add timer button click handler
+addTimerBtn.onclick = async () => {
   const timeValue = newTimerInput.value;
   if (!timeValue) {
     alert("Please select a time first");
     return;
   }
 
-  // Convert 12-hour format to 24-hour format for storage
-  const time24 = convertTo24Hour(timeValue);
+  // Native time input already returns HH:MM format
+  const time24 = timeValue;
 
-  // Find next available timer slot
-  const timersRef = ref(db, "/timers");
-  onValue(timersRef, (snapshot) => {
+  try {
+    // Get current timers to find next available slot
+    const timersRef = ref(db, "/timers");
+    const snapshot = await new Promise((resolve) => {
+      onValue(timersRef, resolve, { onlyOnce: true });
+    });
+    
     const timers = snapshot.val() || {};
     let nextSlot = 0;
 
@@ -284,14 +276,17 @@ addTimerBtn.onclick = () => {
     }
 
     const newTimerKey = `timer${nextSlot}`;
-    set(ref(db, `/timers/${newTimerKey}`), {
+    await set(ref(db, `/timers/${newTimerKey}`), {
       time: time24,
       enabled: true
-    }).then(() => {
-      newTimerInput.value = "";
-      console.log(`Timer ${newTimerKey} added: ${time24}`);
     });
-  }, { onlyOnce: true });
+    
+    newTimerInput.value = "";
+    console.log(`Timer ${newTimerKey} added: ${time24}`);
+  } catch (error) {
+    console.error("Error adding timer:", error);
+    alert("Failed to add timer: " + error.message);
+  }
 };
 
 // ==================== UTILITY FUNCTIONS ====================
@@ -332,9 +327,12 @@ function formatTime12Hour(time24) {
 }
 
 function convertTo24Hour(time12) {
-  // Convert "h:mm AM/PM" to "HH:MM"
-  const match = time12.match(/(\d+):(\d+)\s*(AM|PM)/i);
-  if (!match) return time12;
+  // Handle various formats: "h:mm tt", "hh:mm tt", "h:mm:ss tt"
+  const match = time12.match(/(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM|am|pm)/i);
+  if (!match) {
+    console.log("Could not parse time:", time12);
+    return time12; // Return as-is if can't parse
+  }
 
   let [, hours, minutes, period] = match;
   hours = parseInt(hours);

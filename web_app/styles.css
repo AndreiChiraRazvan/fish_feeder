@@ -477,8 +477,10 @@ input::placeholder {
   outline: none;
 }
 
-.time-input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+/* Style the time input for webkit browsers */
+.time-input::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
 }
 
 /* ==================== UTILITY CLASSES ==================== */
