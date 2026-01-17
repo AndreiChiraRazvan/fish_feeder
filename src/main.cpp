@@ -455,7 +455,7 @@ void processData(AsyncResult &aResult) {
 // ==================== SETUP ====================
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   delay(300);
 
   // Setup servo motor

@@ -104,12 +104,12 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     authBox.style.display = "none";
     controlBox.style.display = "block";
+    badge.style.display = "inline-block"; // Show badge after login
     startListeners();
   } else {
     authBox.style.display = "block";
     controlBox.style.display = "none";
-    badge.className = "status-badge offline";
-    badge.textContent = "Offline";
+    badge.style.display = "none"; // Hide badge on login page
   }
 });
 
