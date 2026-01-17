@@ -156,34 +156,31 @@ function startListeners() {
     }
   });
 
-  // Turbidity
+  // Turbidity - NOTE: Higher value = cleaner water, lower value = dirtier water
   onValue(ref(db, "/turbidity"), (snapshot) => {
     const turbidity = snapshot.val();
     if (turbidity) {
       const value = turbidity.value || 0;
-      const threshold = turbidity.threshold || 500;
-      const alert = turbidity.alert || false;
+      const threshold = turbidity.threshold || 1500;
 
       turbidityValue.textContent = value;
       turbidityThreshold.textContent = threshold;
 
-      // Update progress bar (cap at 100%)
-      const percentage = Math.min((value / threshold) * 100, 100);
+      // Calculate water quality percentage (higher value = better)
+      // Max expected value is ~3500, so we scale to that
+      const maxValue = 3500;
+      const percentage = Math.min((value / maxValue) * 100, 100);
       turbidityBar.style.width = `${percentage}%`;
 
-      // Update bar color based on value
-      if (value > threshold) {
+      // Update bar color - green for good (high value), red for bad (low value)
+      if (value < threshold) {
         turbidityBar.className = "turbidity-bar danger";
-      } else if (value > threshold * 0.7) {
+        turbidityAlert.classList.remove("hidden");
+      } else if (value < threshold * 1.5) {
         turbidityBar.className = "turbidity-bar warning";
+        turbidityAlert.classList.add("hidden");
       } else {
         turbidityBar.className = "turbidity-bar";
-      }
-
-      // Show/hide alert
-      if (alert) {
-        turbidityAlert.classList.remove("hidden");
-      } else {
         turbidityAlert.classList.add("hidden");
       }
     }

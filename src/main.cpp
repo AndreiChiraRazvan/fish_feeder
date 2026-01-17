@@ -53,7 +53,7 @@ const int SERVO_STOP = 90;
 const int ROTATION_TIME_MS = 500; 
 
 // Turbidity sensor
-int turbidityThreshold = 500;
+int turbidityThreshold = 1500;  // Alert when value drops below this (dirty water)
 bool alertSent = false;
 
 // Timer storage
@@ -203,10 +203,11 @@ void feedFish(const char* reason) {
 // ==================== SENSOR FUNCTIONS ====================
 
 // Read turbidity sensor and update database
+// NOTE: This sensor outputs HIGH voltage (~3388) for clear water, LOW voltage (~0) for dirty water
 void readTurbiditySensor() {
   int sensorValue = analogRead(TURBIDITY_PIN);
   
-  Serial.printf("Turbidity sensor value: %d (threshold: %d)\n", sensorValue, turbidityThreshold);
+  Serial.printf("Turbidity sensor value: %d (threshold: %d)\\n", sensorValue, turbidityThreshold);
   
   if (!firebaseReady) return;
   
@@ -217,8 +218,8 @@ void readTurbiditySensor() {
   String timestamp = getCurrentTimestamp();
   Database.set<String>(aClient, "/turbidity/lastUpdate", timestamp, processData, "updateTurbidityTime");
   
-  // Check threshold and send alert if needed
-  bool shouldAlert = sensorValue > turbidityThreshold;
+  // Check threshold - alert when value is BELOW threshold (dirty water = low value)
+  bool shouldAlert = sensorValue < turbidityThreshold;
   
   if (shouldAlert && !alertSent) {
     Database.set<bool>(aClient, "/turbidity/alert", true, processData, "setAlert");
