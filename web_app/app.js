@@ -3,7 +3,9 @@ import {
   getAuth,
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  signOut
+  signOut,
+  setPersistence,
+  browserSessionPersistence
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import {
   getDatabase,
@@ -88,6 +90,8 @@ function showNotification(message, type = 'warning') {
 loginBtn.onclick = async () => {
   authMsg.textContent = "";
   try {
+    // Use session persistence - login only valid for current browser session
+    await setPersistence(auth, browserSessionPersistence);
     await signInWithEmailAndPassword(
       auth,
       document.getElementById("emailField").value,
